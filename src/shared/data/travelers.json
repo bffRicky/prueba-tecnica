@@ -1,0 +1,65 @@
+[
+  {
+    "uuid": "user-tr-1",
+    "nombre": "Juan",
+    "apellidos": "Pérez García",
+    "email": "juan.perez@example.com",
+    "telefono": "+34 600123456",
+    "pais": "España",
+    "fechaRegistro": "2023-01-15"
+  },
+  {
+    "uuid": "user-tr-2",
+    "nombre": "Maria",
+    "apellidos": "López Fernández",
+    "email": "maria.lopez@example.com",
+    "telefono": "+34 611223344",
+    "pais": "México",
+    "fechaRegistro": "2023-02-20"
+  },
+  {
+    "uuid": "user-tr-3",
+    "nombre": "Luisa",
+    "apellidos": "Martínez Soto",
+    "email": "luisa.martinez@example.com",
+    "telefono": "+34 622334455",
+    "pais": "Argentina",
+    "fechaRegistro": "2023-03-10"
+  },
+  {
+    "uuid": "user-tr-4",
+    "nombre": "Carlos",
+    "apellidos": "Ramírez Torres",
+    "email": "carlos.ramirez@example.com",
+    "telefono": "+34 633445566",
+    "pais": "Chile",
+    "fechaRegistro": "2023-04-05"
+  },
+  {
+    "uuid": "user-tr-5",
+    "nombre": "Ana",
+    "apellidos": "Gómez Ruiz",
+    "email": "ana.gomez@example.com",
+    "telefono": "+34 644556677",
+    "pais": "Colombia",
+    "fechaRegistro": "2023-05-18"
+  },
+  {
+    "uuid": "user-tr-6",
+    "nombre": "Miguel",
+    "apellidos": "Fernández Castro",
+    "email": "miguel.fernandez@example.com",
+    "telefono": "+34 655667788",
+    "pais": "Perú",
+    "fechaRegistro": "2023-06-22"
+  },
+  {
+    "uuid": "user-tr-7",
+    "nombre": "Sofía",
+    "apellidos": "Vargas León",
+    "email": "sofia.vargas@example.com",
+    "telefono": "+34 666778899",
+    "pais": "Uruguay",
+    "fechaRegistro": "2023-07-30"
+  }
+]
