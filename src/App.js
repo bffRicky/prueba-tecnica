@@ -4,7 +4,9 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./shared/assets/scss/main.scss";
 
-import Layout from "./shared/components/Layout";
+import Dashboard from "./modules/Dashboard";
+import Travelers from "./modules/Travelers";
+import Reservations from "./modules/Reservations";
 
 function App() {
   return (
@@ -12,23 +14,23 @@ function App() {
       <Routes>
         <Route
           path={process.env.REACT_APP_ROUTE_DASHBOARD_EMPTY}
-          element={<Layout title={process.env.REACT_APP_APP_NAME} />}
+          element={<Dashboard title={process.env.REACT_APP_APP_NAME} />}
         />
         <Route
           path={process.env.REACT_APP_ROUTE_DASHBOARD}
-          element={<Layout title={process.env.REACT_APP_APP_NAME} />}
+          element={<Dashboard title={process.env.REACT_APP_APP_NAME} />}
         />
         <Route
           path={process.env.REACT_APP_ROUTE_TRAVELERS}
-          element={<Layout title={process.env.REACT_APP_APP_NAME} />}
+          element={<Travelers title={process.env.REACT_APP_APP_NAME} />}
         />
         <Route
           path={process.env.REACT_APP_ROUTE_TRAVELERS + "/:UUID"}
-          element={<Layout title={process.env.REACT_APP_APP_NAME} />}
+          element={<Travelers title={process.env.REACT_APP_APP_NAME} />}
         />
         <Route
-          path={process.env.REACT_APP_ROUTE_RESERVAS}
-          element={<Layout title={process.env.REACT_APP_APP_NAME} />}
+          path={process.env.REACT_APP_ROUTE_RESERVATIONS}
+          element={<Reservations title={process.env.REACT_APP_APP_NAME} />}
         />
       </Routes>
     </>
