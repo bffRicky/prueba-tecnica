@@ -1,0 +1,29 @@
+:root {
+  --primary-value: 234, 104, 92;
+  --secondary-value: 9, 54, 66;
+  --blue-value: 59, 130, 246;
+  --white-value: 255, 255, 255;
+
+  --primary: rgb(var(--primary-value));
+  --secondary: rgb(var(--secondary-value));
+  --white: rgb(var(--white-value));
+  --blue: rgb(var(--blue-value));
+
+  --font-family-body: "Inter", sans-serif;
+}
+
+//font size
+$fs-body: 14px;
+
+//z-index
+$zLow: 9;
+$zBase: 99;
+$zMiddle: 999;
+$zHigh: 9999;
+$zHeader: 99999;
+$zModal: 999999;
+
+//border-radius
+$br-card: 10px;
+$br-button: 12px;
+$br-l: 30px;
