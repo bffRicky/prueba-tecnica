@@ -9,10 +9,7 @@ const Layout = ({ children }) => {
   return (
     <div className="main-container">
       <Header />
-      <div className="main-container__body">
-        <Navbar />
-        <div className="body__page">{children}</div>
-      </div>
+      <div className="main-container__body">{children}</div>
     </div>
   );
 };
