@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./index.scss";
 
@@ -24,11 +24,20 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   //handle the links
+  const [activeLink, setActiveLink] = useState("");
   const pages = [
     { name: "Dashboard", link: process.env.REACT_APP_ROUTE_DASHBOARD },
     { name: "Travelers", link: process.env.REACT_APP_ROUTE_TRAVELERS },
     { name: "Reservas", link: process.env.REACT_APP_ROUTE_RESERVATIONS },
   ];
+
+  useEffect(() => {
+    pages.map((page) => {
+      if (window.location.pathname === page.link) {
+        setActiveLink(page.link);
+      }
+    });
+  }, [window.location.pathname]);
 
   //menu functions
   const open = Boolean(anchorEl);
@@ -53,7 +62,7 @@ const Header = () => {
             component="img"
             src={LogoDifferent}
             alt="Logo de Different Road"
-            sx={{ height: 40, px: 2 }}
+            sx={{ height: 40, pr: 2 }}
           />
           <Box
             sx={{
@@ -72,7 +81,13 @@ const Header = () => {
                         window.location.href = page.link;
                         handleCloseMenu();
                       }}>
-                      <Typography textAlign="center">{page.name}</Typography>
+                      <Typography
+                        textAlign="center"
+                        sx={{
+                          color: page.link === activeLink ? "var(--primary)" : "inherit",
+                        }}>
+                        {page.name}
+                      </Typography>
                     </MenuItem>
                   );
                 })}
@@ -87,6 +102,7 @@ const Header = () => {
                   key={page.link + i}
                   underline="none"
                   sx={{
+                    color: page.link === activeLink ? "var(--primary)" : "inherit",
                     ":hover": { color: "var(--primary)" },
                   }}>
                   {page.name}
