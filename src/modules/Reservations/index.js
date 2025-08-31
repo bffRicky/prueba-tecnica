@@ -5,7 +5,7 @@ import "./index.scss";
 import Layout from "../../shared/components/Layout";
 
 const Reservations = () => {
-  return <Layout></Layout>;
+  return <Layout>Reservations</Layout>;
 };
 
 export default Reservations;
