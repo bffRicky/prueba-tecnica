@@ -41,8 +41,14 @@ const Header = () => {
 
   //menu functions
   const open = Boolean(anchorEl);
+
+  //handle the click menu like a toggle based on anchorEl value
   const handleClickMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+    if (anchorEl && anchorEl === event.currentTarget) {
+      return handleCloseMenu();
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
   };
   const handleCloseMenu = () => {
     setAnchorEl(null);
