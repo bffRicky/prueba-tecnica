@@ -4,30 +4,61 @@ import "./index.scss";
 
 import Layout from "../../shared/components/Layout";
 
-import { getTravelers, getReservations } from "../../shared/data/fakeApi";
+// import { getTravelers, getReservations } from "../../shared/data/fakeApi";
+
+//redux
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchTravelers,
+  reduxAddTraveler,
+  reduxEditTraveler,
+  reduxDeleteTraveler,
+} from "../../shared/features/travelers/travelersSlice";
+
+import {
+  fetchReservations,
+  reduxAddReservation,
+  reduxEditReservation,
+  reduxDeleteReservation,
+} from "../../shared/features/reservations/reservationsSlice";
 
 //MUI
-import Box from "@mui/material/Box";
-import Skeleton from "@mui/material/Skeleton";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Backdrop from "@mui/material/Backdrop";
-import Modal from "@mui/material/Modal";
-import Fade from "@mui/material/Fade";
-import Alert from "@mui/material/Alert";
-import TextField from "@mui/material/TextField";
-import Divider from "@mui/material/Divider";
-import Chip from "@mui/material/Chip";
+import {
+  Box,
+  Skeleton,
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  IconButton,
+  Typography,
+  Backdrop,
+  Modal,
+  Fade,
+  Alert,
+  TextField,
+  Divider,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 
 //MUI ICONS
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import InfoIcon from "@mui/icons-material/Info";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  PersonAddAlt as PersonAddAltIcon,
+  Flight as FlightIcon,
+  Pending as PendingIcon,
+  CheckCircle as CheckCircleIcon,
+  Cancel as CancelIcon,
+  Pending,
+} from "@mui/icons-material";
 
 const Travelers = () => {
   const [travelers, setTravelers] = useState([]);
@@ -36,6 +67,52 @@ const Travelers = () => {
   const [editTravelerIsValid, setEditTravelerIsValid] = useState();
   const [modalAddIsOpen, setModalIsAddOpen] = useState(false);
   const [modalEditIsOpen, setModalEditIsOpen] = useState(false);
+  const [modalReservationIsOpen, setModalReservationIsOpen] = useState(false);
+  const [currentTraveler, setCurrentTraveler] = useState([]);
+  const [currentReservations, setCurrentReservations] = useState([]);
+  const [currentResTableRow, setCurrentResTableRow] = useState([]);
+
+  const modalBoxStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "var(--white)",
+    border: "1px solid var(--secondary)",
+    borderRadius: 3,
+    boxShadow: 24,
+    p: 4,
+  };
+
+  //REDUX LOGIC
+  //is the function for send the actions to the reducer
+  const dispatch = useDispatch();
+
+  //allow to read the redux state of travelers and reservations
+  const travelersRedux = useSelector((state) => state.travelers);
+  const reservationsRedux = useSelector((state) => state.reservations);
+
+  //load the travelers and reservations data when the component is mounted
+  useEffect(() => {
+    dispatch(fetchTravelers());
+  }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchReservations());
+  }, [dispatch]);
+
+  //when the state as data i save that locally
+  useEffect(() => {
+    if (travelersRedux.travelers.length > 0) setTravelers(travelersRedux.travelers);
+  }, [travelersRedux.travelers]);
+
+  //when the state as data i save that locally
+  useEffect(() => {
+    console.log(reservationsRedux);
+    if (reservationsRedux.reservations.length > 0) {
+      setReservations(reservationsRedux.reservations);
+    }
+  }, [reservationsRedux.reservations]);
 
   const [newFormTravelerData, setNewFormTravelerData] = useState({
     uuid: "",
@@ -51,21 +128,12 @@ const Travelers = () => {
 
   const toggleModalAdd = () => setModalIsAddOpen(!modalAddIsOpen);
   const toggleModalEdit = () => setModalEditIsOpen(!modalEditIsOpen);
+  const toggleModalReservation = () => setModalReservationIsOpen(!modalReservationIsOpen);
 
+  //create a uniq uuid base on date
   const createUUID = () => {
     return `user-tr-${Math.floor(Math.random() * 100)}-${Date.now()}`;
   };
-
-  //get all travelers
-  useEffect(() => {
-    (async () => {
-      setTravelers(await getTravelers());
-      console.log(await getTravelers());
-
-      setReservations(await getReservations());
-      console.log(await getReservations());
-    })();
-  }, []);
 
   //ADD TRAVELER
   //set the data of the new traveler
@@ -97,10 +165,10 @@ const Travelers = () => {
 
     if (valuesAreComplete) {
       //save data on redux
-      //redux(newFormTravelerData)
+      dispatch(reduxAddTraveler(newFormTravelerData));
 
       //update the array list of travelers
-      setTravelers([...travelers, newFormTravelerData]);
+      // setTravelers([...travelers, newFormTravelerData]);
 
       //close modal and reset the form
       toggleModalAdd();
@@ -148,16 +216,7 @@ const Travelers = () => {
 
     if (valuesAreComplete) {
       //save data on redux
-      //redux(newFormTravelerData)
-
-      //update the array list of travelers
-      const editedTravelers = travelers.map((traveler) => {
-        if (traveler.uuid === editFormTravelerData.uuid) {
-          return (traveler = editFormTravelerData);
-        } else return traveler;
-      });
-
-      setTravelers(editedTravelers);
+      dispatch(reduxEditTraveler(editFormTravelerData));
 
       //close modal and reset the form
       toggleModalEdit();
@@ -174,28 +233,39 @@ const Travelers = () => {
 
   //delete the traveler from the array list of travelers
   const handleOnclickDelete = (traveler) => {
-    if (
-      window.confirm(
-        `¿Estás seguro de que quieres eliminar este viajero? ${traveler.nombre} ${traveler.apellidos}`
-      )
-    ) {
-      const newTravelers = travelers.filter((t) => {
-        if (t.uuid !== traveler.uuid) return t;
-      });
+    const textMessage = `¿Estás seguro de que quieres eliminar este viajero? ${traveler.nombre} ${traveler.apellidos}`;
 
-      setTravelers(newTravelers);
-
-      //save data on redux
-      //redux(newTravelers)
+    //the user confirm if want to delete the traveler
+    if (window.confirm(textMessage)) {
+      dispatch(reduxDeleteTraveler(traveler));
     }
   };
 
-  const handleShowReservations = (travelerId) => {
-    console.log(
-      reservations.filter((res) => {
-        return res.viajeroId === travelerId;
-      })
-    );
+  const handleShowReservations = (traveler) => {
+    toggleModalReservation();
+
+    //reset the variable
+    setCurrentResTableRow([]);
+    setCurrentTraveler(traveler);
+
+    const searchedReservations = reservations.filter((res) => {
+      return res.viajeroId === traveler.uuid;
+    });
+
+    setCurrentReservations(searchedReservations);
+
+    searchedReservations.map((row) => {
+      setCurrentResTableRow((values) => [
+        ...values,
+        {
+          destination: row.destino,
+          state: row.estado,
+          startDate: row.fechaInicio,
+          endDate: row.fechaFin,
+          price: row.precio,
+        },
+      ]);
+    });
   };
 
   useEffect(() => {
@@ -257,11 +327,13 @@ const Travelers = () => {
                 boxSizing: "border-box",
               }}>
               <Chip
+                icon={<FlightIcon />}
                 label="Reservas"
-                onClick={() => {
-                  handleShowReservations(traveler.uuid);
-                }}
+                variant="contained"
                 color="info"
+                onClick={() => {
+                  handleShowReservations(traveler);
+                }}
               />
               <IconButton
                 size="small"
@@ -272,9 +344,6 @@ const Travelers = () => {
                 }}>
                 <EditIcon />
               </IconButton>
-              {/* <IconButton aria-label="info" size="small" color="primary">
-                <InfoIcon />
-              </IconButton> */}
               <IconButton
                 size="small"
                 aria-label="delete"
@@ -320,7 +389,7 @@ const Travelers = () => {
               {i === 0 ? (
                 <Card
                   variant="outlined"
-                  sx={sxValue}
+                  sx={{ ...sxValue, backgroundColor: "rgba(var(--primary-value), 0.2)" }}
                   key={traveler.uuid + i + "add-user"}>
                   {buildCard({}, true)}
                 </Card>
@@ -352,19 +421,7 @@ const Travelers = () => {
               },
             }}>
             <Fade in={modalAddIsOpen}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 400,
-                  bgcolor: "var(--white)",
-                  border: "1px solid var(--secondary)",
-                  borderRadius: 3,
-                  boxShadow: 24,
-                  p: 4,
-                }}>
+              <Box sx={modalBoxStyle}>
                 <Box
                   component="form"
                   sx={{ display: "flex", flexDirection: "column", gap: 2 }}
@@ -439,19 +496,7 @@ const Travelers = () => {
               },
             }}>
             <Fade in={modalEditIsOpen}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 400,
-                  bgcolor: "var(--white)",
-                  border: "1px solid var(--secondary)",
-                  borderRadius: 3,
-                  boxShadow: 24,
-                  p: 4,
-                }}>
+              <Box sx={modalBoxStyle}>
                 <Box
                   component="form"
                   sx={{ display: "flex", flexDirection: "column", gap: 2 }}
@@ -509,6 +554,107 @@ const Travelers = () => {
                     Actualiza Viajero
                   </Button>
                 </Box>
+              </Box>
+            </Fade>
+          </Modal>
+          <Modal
+            aria-labelledby="transition-modal-reservation"
+            aria-describedby="transition-modal-reservation-description"
+            open={modalReservationIsOpen}
+            onClose={toggleModalReservation}
+            closeAfterTransition
+            slots={{ backdrop: Backdrop }}
+            slotProps={{
+              backdrop: {
+                timeout: 500,
+              },
+            }}>
+            <Fade in={modalReservationIsOpen}>
+              <Box sx={{ ...modalBoxStyle, minWidth: "550px" }}>
+                {currentReservations.length > 0 ? (
+                  <>
+                    <Typography>{`${currentTraveler.nombre} ${currentTraveler.apellidos}`}</Typography>
+                    <Divider
+                      sx={{
+                        mt: 1,
+                        mb: 3,
+                      }}
+                    />
+                    <TableContainer component={Paper}>
+                      <Table
+                        // sx={{ minWidth: 650 }}
+                        size="small"
+                        aria-label="a dense table">
+                        <TableHead
+                          sx={{
+                            backgroundColor: "rgba(var(--primary-value),1)",
+                          }}>
+                          <TableRow>
+                            <TableCell align="left">
+                              <Typography sx={{ fontWeight: "550" }}>Destino</Typography>
+                            </TableCell>
+                            <TableCell align="left">
+                              {" "}
+                              <Typography sx={{ fontWeight: "550" }}>Estado</Typography>
+                            </TableCell>
+                            <TableCell align="left">
+                              {" "}
+                              <Typography sx={{ fontWeight: "550" }}>
+                                Fecha inicio
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="left">
+                              {" "}
+                              <Typography sx={{ fontWeight: "550" }}>
+                                Fecha fin
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="left">
+                              {" "}
+                              <Typography sx={{ fontWeight: "550" }}>Precio</Typography>
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {currentResTableRow.map((reservation) => {
+                            return (
+                              <TableRow
+                                key={reservation.destination + currentTraveler.nombre}
+                                align="left"
+                                sx={{
+                                  "&:last-child td, &:last-child th": { border: 0 },
+                                }}>
+                                <TableCell component="th" scope="row">
+                                  {reservation.destination}
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                  {reservation.state.toLowerCase() === "confirmada" ? (
+                                    <CheckCircleIcon color="success" />
+                                  ) : reservation.state.toLowerCase() === "pendiente" ? (
+                                    <Pending color="warning" />
+                                  ) : (
+                                    <CancelIcon color="error" />
+                                  )}
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                  {reservation.startDate}
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                  {reservation.endDate}
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                  {reservation.price}€
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </>
+                ) : (
+                  <Typography>{`${currentTraveler.nombre} ${currentTraveler.apellidos} no tiene reservas`}</Typography>
+                )}
               </Box>
             </Fade>
           </Modal>
