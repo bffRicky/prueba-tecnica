@@ -126,6 +126,7 @@ const EditTraveler = ({ modalIsOpen, onCloseFn, travelerToEdit }) => {
               value={editFormTravelerData.email}
               onChange={handleChangeEditTraveler}
               onBlur={handleOnBlurEditTraveler}
+              type="email"
               fullWidth
             />{" "}
             <TextField

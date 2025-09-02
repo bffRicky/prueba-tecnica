@@ -432,58 +432,6 @@ const Dashboard = () => {
             height={300}
           />
         ) : (
-          // <Box
-          //   sx={{
-          //     width: "100%",
-          //     display: "grid",
-          //     gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
-          //     gap: 2,
-          //   }}>
-          //   {travelersCountry.map((country) => {
-          //     return (
-          //       <Card
-          //         variant="outlined"
-          //         key={country}
-          //         sx={{
-          //           width: "fit-content",
-          //           minWidth: 150,
-          //           borderRadius: 3,
-          //           py: 0,
-
-          //           ":hover": {
-          //             boxShadow: 3,
-          //           },
-          //         }}>
-          //         <CardContent sx={{ "&:last-child": { py: 1 } }}>
-          //           <Typography
-          //             variant="h5"
-          //             component="div"
-          //             sx={{
-          //               display: "flex",
-          //               flexDirection: "row",
-          //               justifyContent: "center",
-          //               alignItems: "center",
-          //               gap: 1.5,
-          //               color: "var(--secondary)",
-          //               fontWeight: 600,
-          //             }}>
-          //             {countriesNumber[country]}
-          //             <Typography
-          //               gutterBottom
-          //               sx={{
-          //                 color: "text.secondary",
-          //                 fontSize: 14,
-          //                 verticalAlign: "center",
-          //                 m: 0,
-          //               }}>
-          //               {country}
-          //             </Typography>
-          //           </Typography>
-          //         </CardContent>
-          //       </Card>
-          //     );
-          //   })}
-          // </Box>
           <React.Fragment key={"loading-travelers"}>
             <Box
               sx={{

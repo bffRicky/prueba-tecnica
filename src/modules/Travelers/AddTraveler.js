@@ -147,11 +147,13 @@ const AddTraveler = ({ modalIsOpen, onCloseFn }) => {
               value={newFormTravelerData.email}
               onChange={handleChangeNewTraveler}
               onBlur={handleOnBlurNewTraveler}
+              type="email"
               fullWidth
             />{" "}
             <TextField
               label="Pais"
               name="pais"
+              type="text"
               value={newFormTravelerData.pais}
               onChange={handleChangeNewTraveler}
               onBlur={handleOnBlurNewTraveler}

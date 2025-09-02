@@ -211,7 +211,7 @@ const Travelers = () => {
               transition: "all 0.3s",
               ":hover": {
                 cursor: "pointer",
-                backgroundColor: "rgba(var(--primary-value), 0.4)",
+                backgroundColor: "rgba(var(--secondary-value), 0.4)",
               },
             }}
             onClick={() => {
