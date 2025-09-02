@@ -25,7 +25,7 @@ const Header = () => {
   const [activeLink, setActiveLink] = useState("");
   const pages = [
     { name: "Dashboard", link: process.env.REACT_APP_ROUTE_DASHBOARD },
-    { name: "Travelers", link: process.env.REACT_APP_ROUTE_TRAVELERS },
+    { name: "Viajeros", link: process.env.REACT_APP_ROUTE_TRAVELERS },
     { name: "Reservas", link: process.env.REACT_APP_ROUTE_RESERVATIONS },
   ];
 
