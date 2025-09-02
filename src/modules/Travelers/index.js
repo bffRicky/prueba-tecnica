@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import "./index.scss";
-
 import Layout from "../../shared/components/Layout";
 import FastLinks from "../../shared/components/FastLinks";
+import AddTraveler from "./AddTraveler";
+import EditTraveler from "./EditTraveler";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -62,10 +62,11 @@ import {
 const Travelers = () => {
   const [travelers, setTravelers] = useState([]);
   const [reservations, setReservations] = useState([]);
-  const [newTravelerIsValid, setNewTravelerIsValid] = useState();
-  const [editTravelerIsValid, setEditTravelerIsValid] = useState();
+
   const [modalAddIsOpen, setModalIsAddOpen] = useState(false);
   const [modalEditIsOpen, setModalEditIsOpen] = useState(false);
+  const [travelerToEdit, setTravelerToEdit] = useState({});
+
   const [modalReservationIsOpen, setModalReservationIsOpen] = useState(false);
   const [currentTraveler, setCurrentTraveler] = useState([]);
   const [currentReservations, setCurrentReservations] = useState([]);
@@ -85,7 +86,8 @@ const Travelers = () => {
 
     setAllStateOfTravelers(new Set(states));
   }, [travelers]);
-  console.log(allStateOfTravelers);
+
+  // console.log(allStateOfTravelers);
 
   const modalBoxStyle = {
     position: "absolute",
@@ -123,127 +125,21 @@ const Travelers = () => {
 
   //when the state as data i save that locally
   useEffect(() => {
-    console.log(reservationsRedux);
+    // console.log(reservationsRedux);
     if (reservationsRedux.reservations.length > 0) {
       setReservations(reservationsRedux.reservations);
     }
   }, [reservationsRedux.reservations]);
 
-  const [newFormTravelerData, setNewFormTravelerData] = useState({
-    uuid: "",
-    nombre: "",
-    apellidos: "",
-    email: "",
-    telefono: "",
-    pais: "",
-    fechaRegistro: "",
-  });
-
-  const [editFormTravelerData, setEditFormTravelerData] = useState({});
-
+  //toggle the modals
   const toggleModalAdd = () => setModalIsAddOpen(!modalAddIsOpen);
   const toggleModalEdit = () => setModalEditIsOpen(!modalEditIsOpen);
   const toggleModalReservation = () => setModalReservationIsOpen(!modalReservationIsOpen);
 
-  //create a uniq uuid base on date
-  const createUUID = () => {
-    return `user-tr-${Math.floor(Math.random() * 100)}-${Date.now()}`;
-  };
-
-  //ADD TRAVELER
-  //set the data of the new traveler
-  const handleChangeNewTraveler = (e) => {
-    const { name, value } = e.target;
-
-    setNewFormTravelerData((values) => ({ ...values, [name]: value }));
-  };
-
-  //handle the visualization of the alert if the data are empty
-  const handleOnBlurNewTraveler = (e) => {
-    const { name, value } = e.target;
-    if (value === "") setNewTravelerIsValid(false);
-    else setNewTravelerIsValid(true);
-  };
-
-  const handleSubmitNewTraveler = (e) => {
-    e.preventDefault();
-
-    let valuesAreComplete = true;
-
-    for (const [key, value] of Object.entries(newFormTravelerData)) {
-      if (value === "") {
-        valuesAreComplete = false;
-        setNewTravelerIsValid(false);
-        break;
-      }
-    }
-
-    if (valuesAreComplete) {
-      //save data on redux
-      dispatch(reduxAddTraveler(newFormTravelerData));
-
-      //update the array list of travelers
-      // setTravelers([...travelers, newFormTravelerData]);
-
-      //close modal and reset the form
-      toggleModalAdd();
-
-      //reset the form
-      setNewFormTravelerData({
-        uuid: "",
-        nombre: "",
-        apellidos: "",
-        email: "",
-        telefono: "",
-        pais: "",
-        fechaRegistro: "",
-      });
-    }
-  };
-
-  //EDIT TRAVELER
-  //set the data of the edited traveler
-  const handleChangeEditTraveler = (e) => {
-    const { name, value } = e.target;
-
-    setEditFormTravelerData((values) => ({ ...values, [name]: value }));
-  };
-
-  //handle the visualization of the alert if the data are empty
-  const handleOnBlurEditTraveler = (e) => {
-    const { name, value } = e.target;
-    if (value === "") setEditTravelerIsValid(false);
-    else setEditTravelerIsValid(true);
-  };
-
-  const handleSubmitEditTraveler = (e) => {
-    e.preventDefault();
-
-    let valuesAreComplete = true;
-
-    for (const [key, value] of Object.entries(editFormTravelerData)) {
-      if (value === "") {
-        valuesAreComplete = false;
-        setEditTravelerIsValid(false);
-        break;
-      }
-    }
-
-    if (valuesAreComplete) {
-      //save data on redux
-      dispatch(reduxEditTraveler(editFormTravelerData));
-
-      //close modal and reset the form
-      toggleModalEdit();
-
-      //reset the form
-      setEditFormTravelerData({});
-    }
-  };
-
   const handleOnclickEdit = (traveler) => {
+    setTravelerToEdit(traveler);
     toggleModalEdit();
-    setEditFormTravelerData({ ...traveler });
+    // setEditFormTravelerData(traveler);
   };
 
   //delete the traveler from the array list of travelers
@@ -287,14 +183,6 @@ const Travelers = () => {
     console.log(reservationToEdit, traveler);
   };
 
-  useEffect(() => {
-    console.log(newFormTravelerData);
-  }, [newFormTravelerData]);
-
-  useEffect(() => {
-    console.log(editFormTravelerData);
-  }, [editFormTravelerData]);
-
   //build the card for each traveler
   const buildCard = (traveler, addTraveler = false) => {
     return (
@@ -314,11 +202,6 @@ const Travelers = () => {
             }}
             onClick={() => {
               toggleModalAdd();
-              setNewFormTravelerData((values) => ({ ...values, uuid: createUUID() }));
-              setNewFormTravelerData((values) => ({
-                ...values,
-                fechaRegistro: new Date().toISOString().split("T")[0],
-              }));
             }}>
             <PersonAddAltIcon sx={{ fontSize: 64, color: "var(--primary)" }} />
           </Box>
@@ -429,157 +312,15 @@ const Travelers = () => {
       <Divider sx={{ mt: 1, mb: 3 }} />
       {travelers.length > 0 ? (
         <>
-          <Modal
-            aria-labelledby="transition-modal-title"
-            aria-describedby="transition-modal-description"
-            open={modalAddIsOpen}
-            onClose={toggleModalAdd}
-            closeAfterTransition
-            slots={{ backdrop: Backdrop }}
-            slotProps={{
-              backdrop: {
-                timeout: 500,
-              },
-            }}>
-            <Fade in={modalAddIsOpen}>
-              <Box sx={modalBoxStyle}>
-                <Box
-                  component="form"
-                  sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                  onSubmit={handleSubmitNewTraveler}
-                  autoComplete="off">
-                  <TextField
-                    label="Nombre"
-                    name="nombre"
-                    value={newFormTravelerData.nombre}
-                    onChange={handleChangeNewTraveler}
-                    onBlur={handleOnBlurNewTraveler}
-                    fullWidth
-                  />
-                  <TextField
-                    label="Apellidos"
-                    name="apellidos"
-                    value={newFormTravelerData.apellidos}
-                    onChange={handleChangeNewTraveler}
-                    onBlur={handleOnBlurNewTraveler}
-                    fullWidth
-                  />{" "}
-                  <TextField
-                    label="Email"
-                    name="email"
-                    value={newFormTravelerData.email}
-                    onChange={handleChangeNewTraveler}
-                    onBlur={handleOnBlurNewTraveler}
-                    fullWidth
-                  />{" "}
-                  <TextField
-                    label="Pais"
-                    name="pais"
-                    value={newFormTravelerData.pais}
-                    onChange={handleChangeNewTraveler}
-                    onBlur={handleOnBlurNewTraveler}
-                    fullWidth
-                  />{" "}
-                  <TextField
-                    label="Telefono"
-                    name="telefono"
-                    value={newFormTravelerData.telefono}
-                    onChange={handleChangeNewTraveler}
-                    onBlur={handleOnBlurNewTraveler}
-                    type="number"
-                    fullWidth
-                  />
-                  {newTravelerIsValid === false ? (
-                    <Alert severity="warning">
-                      Hay que rellenar todos los campos para crear un nuevo viajero
-                    </Alert>
-                  ) : null}
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ backgroundColor: "var(--primary)" }}>
-                    Guarda Viajero
-                  </Button>
-                </Box>
-              </Box>
-            </Fade>
-          </Modal>
+          <AddTraveler modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
+          <EditTraveler
+            modalIsOpen={modalEditIsOpen}
+            onCloseFn={toggleModalEdit}
+            travelerToEdit={travelerToEdit}
+          />
           <Box sx={{ mb: 3 }}>{}</Box>
           {buildBoxCards(travelers)}
-          <Modal
-            aria-labelledby="transition-modal-edit"
-            aria-describedby="transition-modal-edit-description"
-            open={modalEditIsOpen}
-            onClose={toggleModalEdit}
-            closeAfterTransition
-            slots={{ backdrop: Backdrop }}
-            slotProps={{
-              backdrop: {
-                timeout: 500,
-              },
-            }}>
-            <Fade in={modalEditIsOpen}>
-              <Box sx={modalBoxStyle}>
-                <Box
-                  component="form"
-                  sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                  onSubmit={handleSubmitEditTraveler}
-                  autoComplete="off">
-                  <TextField
-                    label="Nombre"
-                    name="nombre"
-                    value={editFormTravelerData.nombre}
-                    onChange={handleChangeEditTraveler}
-                    onBlur={handleOnBlurEditTraveler}
-                    fullWidth
-                  />
-                  <TextField
-                    label="Apellidos"
-                    name="apellidos"
-                    value={editFormTravelerData.apellidos}
-                    onChange={handleChangeEditTraveler}
-                    onBlur={handleOnBlurEditTraveler}
-                    fullWidth
-                  />{" "}
-                  <TextField
-                    label="Email"
-                    name="email"
-                    value={editFormTravelerData.email}
-                    onChange={handleChangeEditTraveler}
-                    onBlur={handleOnBlurEditTraveler}
-                    fullWidth
-                  />{" "}
-                  <TextField
-                    label="Pais"
-                    name="pais"
-                    value={editFormTravelerData.pais}
-                    onChange={handleChangeEditTraveler}
-                    onBlur={handleOnBlurEditTraveler}
-                    fullWidth
-                  />{" "}
-                  <TextField
-                    label="Telefono"
-                    name="telefono"
-                    value={editFormTravelerData.telefono}
-                    onChange={handleChangeEditTraveler}
-                    onBlur={handleOnBlurEditTraveler}
-                    fullWidth
-                  />
-                  {editTravelerIsValid === false ? (
-                    <Alert severity="warning">
-                      Hay que rellenar todos los campos para crear un nuevo viajero
-                    </Alert>
-                  ) : null}
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ backgroundColor: "var(--primary)" }}>
-                    Actualiza Viajero
-                  </Button>
-                </Box>
-              </Box>
-            </Fade>
-          </Modal>
+
           <Modal
             aria-labelledby="transition-modal-reservation"
             aria-describedby="transition-modal-reservation-description"
