@@ -111,9 +111,17 @@ const Dashboard = () => {
   return (
     <Layout>
       <FastLinks />
+      <Typography
+        variant="h4"
+        textAlign={"center"}
+        color="var(--primary)"
+        textTransform={"uppercase"}
+        sx={{ my: 4 }}>
+        Dashboard
+      </Typography>
       <AddTraveler modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
 
-      <Box sx={{ my: 8 }}>
+      <Box sx={{ mb: 8 }}>
         <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
           VIAJEROS
         </Typography>
