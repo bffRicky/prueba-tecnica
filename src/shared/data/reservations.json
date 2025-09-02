@@ -9,6 +9,24 @@
     "estado": "Pendiente"
   },
   {
+    "uuid": "res-1-2",
+    "viajeroId": "user-tr-2",
+    "destino": "Bogotá",
+    "fechaInicio": "2024-10-10",
+    "fechaFin": "2024-10-15",
+    "precio": 950.00,
+    "estado": "Confirmada"
+  },
+  {
+    "uuid": "res-2-3",
+    "viajeroId": "user-tr-2",
+    "destino": "Buenos Aires",
+    "fechaInicio": "2024-10-01",
+    "fechaFin": "2024-10-07",
+    "precio": 700.00,
+    "estado": "Cancelada"
+  },
+  {
     "uuid": "res-2",
     "viajeroId": "user-tr-5",
     "destino": "Buenos Aires",
@@ -36,8 +54,44 @@
     "estado": "Confirmada"
   },
   {
+    "uuid": "res-45",
+    "viajeroId": "user-tr-1",
+    "destino": "Roma",
+    "fechaInicio": "2024-11-12",
+    "fechaFin": "2024-11-18",
+    "precio": 520.00,
+    "estado": "Confirmada"
+  },
+  {
+    "uuid": "res-455",
+    "viajeroId": "user-tr-1",
+    "destino": "Milano",
+    "fechaInicio": "2024-11-12",
+    "fechaFin": "2024-11-18",
+    "precio": 300.00,
+    "estado": "cancelada"
+  },
+  {
+    "uuid": "res-455e",
+    "viajeroId": "user-tr-13",
+    "destino": "Bogotá",
+    "fechaInicio": "2024-11-12",
+    "fechaFin": "2024-11-18",
+    "precio": 120.00,
+    "estado": "Pendiente"
+  },
+  {
     "uuid": "res-5",
     "viajeroId": "user-tr-7",
+    "destino": "Santiago",
+    "fechaInicio": "2024-12-05",
+    "fechaFin": "2024-12-10",
+    "precio": 410.00,
+    "estado": "Pendiente"
+  },
+  {
+    "uuid": "res-53s",
+    "viajeroId": "user-tr-13",
     "destino": "Santiago",
     "fechaInicio": "2024-12-05",
     "fechaFin": "2024-12-10",

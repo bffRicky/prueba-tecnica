@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./index.scss";
 
 import Layout from "../../shared/components/Layout";
-
-// import { getTravelers, getReservations } from "../../shared/data/fakeApi";
+import FastLinks from "../../shared/components/FastLinks";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -57,7 +56,7 @@ import {
   Pending as PendingIcon,
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
-  Pending,
+  Add as AddIcon,
 } from "@mui/icons-material";
 
 const Travelers = () => {
@@ -71,6 +70,22 @@ const Travelers = () => {
   const [currentTraveler, setCurrentTraveler] = useState([]);
   const [currentReservations, setCurrentReservations] = useState([]);
   const [currentResTableRow, setCurrentResTableRow] = useState([]);
+
+  const [travelersFiltered, setTravelersFiltered] = useState([]);
+  const [allStateOfTravelers, setAllStateOfTravelers] = useState([]);
+
+  useEffect(() => {
+    const states = [];
+
+    if (travelers.length > 0) {
+      travelers.map((travelers) => {
+        return states.push(travelers.pais);
+      });
+    }
+
+    setAllStateOfTravelers(new Set(states));
+  }, [travelers]);
+  console.log(allStateOfTravelers);
 
   const modalBoxStyle = {
     position: "absolute",
@@ -95,10 +110,10 @@ const Travelers = () => {
 
   //load the travelers and reservations data when the component is mounted
   useEffect(() => {
-    dispatch(fetchTravelers());
+    if (travelersRedux?.travelers?.length == 0) dispatch(fetchTravelers());
   }, [dispatch]);
   useEffect(() => {
-    dispatch(fetchReservations());
+    if (reservationsRedux?.reservations?.length == 0) dispatch(fetchReservations());
   }, [dispatch]);
 
   //when the state as data i save that locally
@@ -259,13 +274,17 @@ const Travelers = () => {
         ...values,
         {
           destination: row.destino,
-          state: row.estado,
+          status: row.estado,
           startDate: row.fechaInicio,
           endDate: row.fechaFin,
           price: row.precio,
         },
       ]);
     });
+  };
+
+  const handleEditReservation = (reservationToEdit, traveler) => {
+    console.log(reservationToEdit, traveler);
   };
 
   useEffect(() => {
@@ -406,6 +425,8 @@ const Travelers = () => {
 
   return (
     <Layout>
+      <FastLinks />
+      <Divider sx={{ mt: 1, mb: 3 }} />
       {travelers.length > 0 ? (
         <>
           <Modal
@@ -465,6 +486,7 @@ const Travelers = () => {
                     value={newFormTravelerData.telefono}
                     onChange={handleChangeNewTraveler}
                     onBlur={handleOnBlurNewTraveler}
+                    type="number"
                     fullWidth
                   />
                   {newTravelerIsValid === false ? (
@@ -482,6 +504,7 @@ const Travelers = () => {
               </Box>
             </Fade>
           </Modal>
+          <Box sx={{ mb: 3 }}>{}</Box>
           {buildBoxCards(travelers)}
           <Modal
             aria-labelledby="transition-modal-edit"
@@ -573,13 +596,47 @@ const Travelers = () => {
               <Box sx={{ ...modalBoxStyle, minWidth: "550px" }}>
                 {currentReservations.length > 0 ? (
                   <>
-                    <Typography>{`${currentTraveler.nombre} ${currentTraveler.apellidos}`}</Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontWeight: "600",
+                      }}>
+                      <Typography>
+                        {`${currentTraveler.nombre} ${currentTraveler.apellidos}`}{" "}
+                      </Typography>
+                      <Chip
+                        icon={
+                          <AddIcon
+                            sx={{
+                              color: "var(--white)",
+                            }}
+                          />
+                        }
+                        label="Reservas"
+                        variant="contained"
+                        color="info"
+                        sx={{
+                          backgroundColor: "var(--primary)",
+                          fontWeight: "500",
+                          ":hover": {
+                            backgroundColor: "var(--secondary)",
+                          },
+                        }}
+                        onClick={() => {
+                          // handleShowReservations(traveler);
+                        }}
+                      />
+                    </Box>
+
                     <Divider
                       sx={{
-                        mt: 1,
+                        mt: 1.5,
                         mb: 3,
                       }}
                     />
+
                     <TableContainer component={Paper}>
                       <Table
                         // sx={{ minWidth: 650 }}
@@ -587,63 +644,71 @@ const Travelers = () => {
                         aria-label="a dense table">
                         <TableHead
                           sx={{
-                            backgroundColor: "rgba(var(--primary-value),1)",
+                            backgroundColor: "rgba(var(--primary-value),0.8)",
                           }}>
                           <TableRow>
                             <TableCell align="left">
                               <Typography sx={{ fontWeight: "550" }}>Destino</Typography>
                             </TableCell>
                             <TableCell align="left">
-                              {" "}
                               <Typography sx={{ fontWeight: "550" }}>Estado</Typography>
                             </TableCell>
                             <TableCell align="left">
-                              {" "}
                               <Typography sx={{ fontWeight: "550" }}>
                                 Fecha inicio
                               </Typography>
                             </TableCell>
                             <TableCell align="left">
-                              {" "}
                               <Typography sx={{ fontWeight: "550" }}>
                                 Fecha fin
                               </Typography>
                             </TableCell>
                             <TableCell align="left">
-                              {" "}
                               <Typography sx={{ fontWeight: "550" }}>Precio</Typography>
                             </TableCell>
+                            <TableCell></TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {currentResTableRow.map((reservation) => {
+                          {currentResTableRow.map((currentRes) => {
                             return (
                               <TableRow
-                                key={reservation.destination + currentTraveler.nombre}
+                                key={currentRes.destination + currentTraveler.nombre}
                                 align="left"
                                 sx={{
                                   "&:last-child td, &:last-child th": { border: 0 },
                                 }}>
                                 <TableCell component="th" scope="row">
-                                  {reservation.destination}
+                                  {currentRes.destination}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {reservation.state.toLowerCase() === "confirmada" ? (
+                                  {currentRes.status.toLowerCase() === "confirmada" ? (
                                     <CheckCircleIcon color="success" />
-                                  ) : reservation.state.toLowerCase() === "pendiente" ? (
-                                    <Pending color="warning" />
+                                  ) : currentRes.status.toLowerCase() === "pendiente" ? (
+                                    <PendingIcon color="warning" />
                                   ) : (
                                     <CancelIcon color="error" />
                                   )}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {reservation.startDate}
+                                  {currentRes.startDate}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {reservation.endDate}
+                                  {currentRes.endDate}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {reservation.price}€
+                                  {currentRes.price}€
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                  <IconButton
+                                    size="small"
+                                    aria-label="edit"
+                                    color="primary"
+                                    onClick={() => {
+                                      handleEditReservation(currentRes, currentTraveler);
+                                    }}>
+                                    <EditIcon />
+                                  </IconButton>
                                 </TableCell>
                               </TableRow>
                             );

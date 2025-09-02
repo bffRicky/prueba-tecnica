@@ -33,6 +33,10 @@ const Header = () => {
 
   useEffect(() => {
     pages.map((page) => {
+      //if the link is empty we're in the dashboard
+      if (window.location.pathname === process.env.REACT_APP_ROUTE_DASHBOARD_EMPTY) {
+        setActiveLink(process.env.REACT_APP_ROUTE_DASHBOARD);
+      }
       if (window.location.pathname === page.link) {
         setActiveLink(page.link);
       }

@@ -9,6 +9,24 @@
     "fechaRegistro": "2023-01-15"
   },
   {
+    "uuid": "user-tr-13",
+    "nombre": "Paolo",
+    "apellidos": "Rossi",
+    "email": "paolo.rossi@example.com",
+    "telefono": "+39 600123456",
+    "pais": "Italia",
+    "fechaRegistro": "2023-03-15"
+  },
+  {
+    "uuid": "user-tr-13",
+    "nombre": "Mario",
+    "apellidos": "Vercelli",
+    "email": "mario.vercelli@example.com",
+    "telefono": "+39 600123456",
+    "pais": "Italia",
+    "fechaRegistro": "2023-01-15"
+  },
+  {
     "uuid": "user-tr-2",
     "nombre": "Maria",
     "apellidos": "López Fernández",
