@@ -417,6 +417,7 @@ const Dashboard = () => {
             ]}
             width={200}
             height={200}
+            sx={{ justifyContent: "flex-end" }}
           />
         ) : null}
       </Box>
