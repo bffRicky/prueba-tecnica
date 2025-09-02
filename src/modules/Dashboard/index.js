@@ -113,7 +113,7 @@ const Dashboard = () => {
       <FastLinks />
       <AddTraveler modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
 
-      <Box sx={{ my: 3 }}>
+      <Box sx={{ my: 8 }}>
         <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
           VIAJEROS
         </Typography>
@@ -255,7 +255,7 @@ const Dashboard = () => {
           </React.Fragment>
         )}
       </Box>
-      <Box sx={{ my: 3 }}>
+      <Box sx={{ my: 8 }}>
         <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
           RESERVAS
         </Typography>
@@ -399,7 +399,7 @@ const Dashboard = () => {
           </React.Fragment>
         )}
       </Box>
-      <Box sx={{ my: 2 }}>
+      <Box sx={{ my: 8 }}>
         {Object.entries(reservationStatus).length > 0 ? (
           <PieChart
             series={[
@@ -421,9 +421,9 @@ const Dashboard = () => {
           />
         ) : null}
       </Box>
-      <Box sx={{ my: 3 }}>
+      <Box sx={{ my: 6 }}>
         <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
-          PAISES
+          PAISES DE LOS VIAJEROS
         </Typography>
 
         {travelersCountry.length > 0 ? (
