@@ -12,13 +12,16 @@ import { fetchReservations } from "../../shared/features/reservations/reservatio
 
 //MUI
 import { Box, Skeleton, Card, CardContent, Typography } from "@mui/material";
+import { BarChart, PieChart } from "@mui/x-charts";
 
 //MUI ICONS
-import { Add as AddIcon } from "@mui/icons-material";
+import { Add as AddIcon, PersonAddAlt as PersonAddAltIcon } from "@mui/icons-material";
 
 const Dashboard = () => {
   const [travelers, setTravelers] = useState([]);
   const [reservations, setReservations] = useState([]);
+
+  const [chartValue, setChartValue] = useState([]);
 
   const [modalAddIsOpen, setModalIsAddOpen] = useState(false);
 
@@ -95,6 +98,16 @@ const Dashboard = () => {
     }
   }, [reservationsRedux.reservations]);
 
+  useEffect(() => {
+    if (travelersCountry.length > 0) {
+      const valueAxisX = travelersCountry.map((countryName) => {
+        return countriesNumber[countryName];
+      });
+
+      setChartValue(valueAxisX);
+    }
+  }, [travelersCountry, countriesNumber]);
+
   return (
     <Layout>
       <FastLinks />
@@ -115,45 +128,32 @@ const Dashboard = () => {
             <Card
               variant="outlined"
               sx={{
-                width: "fit-content",
-                minWidth: 150,
+                width: "150px",
+                // minWidth: "150px",
                 borderRadius: 3,
-                border: "none",
-                backgroundColor: "rgba(var(--primary-value), 1)",
-
                 ":hover": {
                   boxShadow: 3,
-                  cursor: "pointer",
                 },
+                backgroundColor: "rgba(var(--primary-value), 0.2)",
               }}
-              onClick={() => {
-                toggleModalAdd();
-              }}>
-              <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
-                <Typography
-                  component="div"
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 1.5,
-                    color: "var(--secondary)",
-                    fontWeight: 600,
-                  }}>
-                  <AddIcon />
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      color: "text",
-                      fontSize: 14,
-                      verticalAlign: "center",
-                      m: 0,
-                    }}>
-                    VIAJERO
-                  </Typography>
-                </Typography>
-              </CardContent>
+              key={"add-user"}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                  transition: "all 0.3s",
+                  ":hover": {
+                    cursor: "pointer",
+                    backgroundColor: "rgba(var(--primary-value), 0.4)",
+                  },
+                }}
+                onClick={() => {
+                  toggleModalAdd();
+                }}>
+                <PersonAddAltIcon sx={{ fontSize: 64, color: "var(--primary)" }} />
+              </Box>
             </Card>
 
             <Card
@@ -171,30 +171,25 @@ const Dashboard = () => {
               }}>
               <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
                 <Typography
-                  variant="h5"
-                  component="div"
+                  gutterBottom
                   sx={{
                     display: "flex",
                     flexDirection: "row",
-                    justifyContent: "center",
                     alignItems: "center",
-                    gap: 1.5,
+                    color: "text.secondary",
+                    fontSize: 14,
+                    m: 0,
+                  }}>
+                  Total viajeros
+                </Typography>
+                <Typography
+                  variant="h5"
+                  component="div"
+                  sx={{
                     color: "var(--secondary)",
                     fontWeight: 600,
                   }}>
                   {travelers.length}
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      color: "text.secondary",
-                      fontSize: 14,
-                      m: 0,
-                    }}>
-                    Total viajeros
-                  </Typography>
                 </Typography>
               </CardContent>
             </Card>
@@ -213,28 +208,23 @@ const Dashboard = () => {
               }}>
               <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
                 <Typography
+                  gutterBottom
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: 14,
+                    verticalAlign: "center",
+                    m: 0,
+                  }}>
+                  Total paises de origen
+                </Typography>
+                <Typography
                   variant="h5"
                   component="div"
                   sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 1.5,
                     color: "var(--secondary)",
                     fontWeight: 600,
                   }}>
                   {travelersCountry.length}
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: 14,
-                      verticalAlign: "center",
-                      m: 0,
-                    }}>
-                    Total paises de origen
-                  </Typography>
                 </Typography>
               </CardContent>
             </Card>
@@ -292,28 +282,23 @@ const Dashboard = () => {
               }}>
               <CardContent>
                 <Typography
+                  gutterBottom
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: 14,
+                    verticalAlign: "center",
+                    m: 0,
+                  }}>
+                  Total reservas
+                </Typography>
+                <Typography
                   variant="h5"
                   component="div"
                   sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 1.5,
                     color: "var(--secondary)",
                     fontWeight: 600,
                   }}>
                   {reservations.length}
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: 14,
-                      verticalAlign: "center",
-                      m: 0,
-                    }}>
-                    Total reservas
-                  </Typography>
                 </Typography>
               </CardContent>
             </Card>
@@ -332,28 +317,23 @@ const Dashboard = () => {
               }}>
               <CardContent>
                 <Typography
+                  gutterBottom
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: 14,
+                    verticalAlign: "center",
+                    m: 0,
+                  }}>
+                  Entradas totales
+                </Typography>
+                <Typography
                   variant="h5"
                   component="div"
                   sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 1.5,
                     color: "var(--secondary)",
                     fontWeight: 600,
                   }}>
                   {totalIncome}€
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: 14,
-                      verticalAlign: "center",
-                      m: 0,
-                    }}>
-                    Entradas totales
-                  </Typography>
                 </Typography>
               </CardContent>
             </Card>
@@ -372,79 +352,26 @@ const Dashboard = () => {
               }}>
               <CardContent>
                 <Typography
+                  gutterBottom
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: 14,
+                    verticalAlign: "center",
+                    m: 0,
+                  }}>
+                  Media precios
+                </Typography>
+                <Typography
                   variant="h5"
                   component="div"
                   sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 1.5,
                     color: "var(--secondary)",
                     fontWeight: 600,
                   }}>
                   {Math.round(totalIncome / reservations.length)}€
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: 14,
-                      verticalAlign: "center",
-                      m: 0,
-                    }}>
-                    Media precios
-                  </Typography>
                 </Typography>
               </CardContent>
             </Card>
-            {Object.entries(reservationStatus).length > 0
-              ? Object.entries(reservationStatus).map(([key, value]) => {
-                  return (
-                    <Card
-                      variant="outlined"
-                      key={key + value}
-                      sx={{
-                        width: "fit-content",
-                        minWidth: 150,
-                        borderRadius: 3,
-                        border: "none",
-                        background: `linear-gradient(135deg, rgba(${
-                          key === "confirmada"
-                            ? "0,255,0"
-                            : key === "pendiente"
-                            ? "255,255,0"
-                            : "255,0,0"
-                        }, 0.4) 0%, #fff7f7ff 100%)`,
-                        ":hover": {
-                          boxShadow: 3,
-                        },
-                      }}>
-                      <CardContent sx={{ display: "flex", flexDirection: "column" }}>
-                        <Typography
-                          gutterBottom
-                          sx={{
-                            color: "text.secondary",
-                            fontSize: 14,
-                            verticalAlign: "center",
-                            m: 0,
-                          }}>
-                          Reservas {key}
-                        </Typography>
-                        <Typography
-                          variant="h5"
-                          component="div"
-                          sx={{
-                            gap: 1.5,
-                            color: "var(--secondary)",
-                            fontWeight: 600,
-                          }}>
-                          {value}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  );
-                })
-              : null}
           </Box>
         ) : (
           <React.Fragment key={"loading-travelers"}>
@@ -472,64 +399,91 @@ const Dashboard = () => {
           </React.Fragment>
         )}
       </Box>
+      <Box sx={{ my: 2 }}>
+        {Object.entries(reservationStatus).length > 0 ? (
+          <PieChart
+            series={[
+              {
+                data: [
+                  {
+                    id: 0,
+                    value: reservationStatus.confirmada,
+                    label: "Confirmadas",
+                  },
+                  { id: 1, value: reservationStatus.pendiente, label: "Pendiente" },
+                  { id: 2, value: reservationStatus.cancelada, label: "Cancelada" },
+                ],
+              },
+            ]}
+            width={200}
+            height={200}
+          />
+        ) : null}
+      </Box>
       <Box sx={{ my: 3 }}>
         <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
           PAISES
         </Typography>
-        {travelersCountry.length > 0 ? (
-          <Box
-            sx={{
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
-              gap: 2,
-            }}>
-            {travelersCountry.map((country) => {
-              return (
-                <Card
-                  variant="outlined"
-                  key={country}
-                  sx={{
-                    width: "fit-content",
-                    minWidth: 150,
-                    borderRadius: 3,
-                    py: 0,
 
-                    ":hover": {
-                      boxShadow: 3,
-                    },
-                  }}>
-                  <CardContent sx={{ "&:last-child": { py: 1 } }}>
-                    <Typography
-                      variant="h5"
-                      component="div"
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: 1.5,
-                        color: "var(--secondary)",
-                        fontWeight: 600,
-                      }}>
-                      {countriesNumber[country]}
-                      <Typography
-                        gutterBottom
-                        sx={{
-                          color: "text.secondary",
-                          fontSize: 14,
-                          verticalAlign: "center",
-                          m: 0,
-                        }}>
-                        {country}
-                      </Typography>
-                    </Typography>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </Box>
+        {travelersCountry.length > 0 ? (
+          <BarChart
+            xAxis={[{ data: [...travelersCountry] }]}
+            series={[{ data: [...chartValue] }]}
+            height={300}
+          />
         ) : (
+          // <Box
+          //   sx={{
+          //     width: "100%",
+          //     display: "grid",
+          //     gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
+          //     gap: 2,
+          //   }}>
+          //   {travelersCountry.map((country) => {
+          //     return (
+          //       <Card
+          //         variant="outlined"
+          //         key={country}
+          //         sx={{
+          //           width: "fit-content",
+          //           minWidth: 150,
+          //           borderRadius: 3,
+          //           py: 0,
+
+          //           ":hover": {
+          //             boxShadow: 3,
+          //           },
+          //         }}>
+          //         <CardContent sx={{ "&:last-child": { py: 1 } }}>
+          //           <Typography
+          //             variant="h5"
+          //             component="div"
+          //             sx={{
+          //               display: "flex",
+          //               flexDirection: "row",
+          //               justifyContent: "center",
+          //               alignItems: "center",
+          //               gap: 1.5,
+          //               color: "var(--secondary)",
+          //               fontWeight: 600,
+          //             }}>
+          //             {countriesNumber[country]}
+          //             <Typography
+          //               gutterBottom
+          //               sx={{
+          //                 color: "text.secondary",
+          //                 fontSize: 14,
+          //                 verticalAlign: "center",
+          //                 m: 0,
+          //               }}>
+          //               {country}
+          //             </Typography>
+          //           </Typography>
+          //         </CardContent>
+          //       </Card>
+          //     );
+          //   })}
+          // </Box>
           <React.Fragment key={"loading-travelers"}>
             <Box
               sx={{
