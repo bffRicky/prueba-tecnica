@@ -4,6 +4,7 @@ import "./index.scss";
 
 import Layout from "../../shared/components/Layout";
 import FastLinks from "../../shared/components/FastLinks";
+import AddTraveler from "../Travelers/AddTraveler";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -36,6 +37,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Icon,
 } from "@mui/material";
 
 //MUI ICONS
@@ -56,6 +58,8 @@ const Dashboard = () => {
   const [travelers, setTravelers] = useState([]);
   const [reservations, setReservations] = useState([]);
 
+  const [modalAddIsOpen, setModalIsAddOpen] = useState(false);
+
   const [totalIncome, setTotalIncome] = useState(0);
   const [reservationStatus, setReservationStatus] = useState({
     confirmada: 0,
@@ -65,6 +69,9 @@ const Dashboard = () => {
   const [travelersCountry, setTravelersCountry] = useState(0);
 
   const [countriesNumber, setCountriesNumber] = useState(0);
+
+  //toggle the modals
+  const toggleModalAdd = () => setModalIsAddOpen(!modalAddIsOpen);
 
   //REDUX LOGIC
   //is the function for send the actions to the reducer
@@ -134,6 +141,7 @@ const Dashboard = () => {
   return (
     <Layout>
       <FastLinks />
+      <AddTraveler modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
       {/* <Divider sx={{ mt: 1, mb: 3 }} /> */}
       <Box sx={{ my: 3 }}>
         <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
@@ -154,13 +162,57 @@ const Dashboard = () => {
                 minWidth: 150,
                 borderRadius: 3,
                 border: "none",
+                backgroundColor: "rgba(var(--primary-value), 1)",
+
+                ":hover": {
+                  boxShadow: 3,
+                  cursor: "pointer",
+                },
+              }}
+              onClick={() => {
+                toggleModalAdd();
+              }}>
+              <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
+                <Typography
+                  component="div"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 1.5,
+                    color: "var(--secondary)",
+                    fontWeight: 600,
+                  }}>
+                  <AddIcon />
+                  <Typography
+                    gutterBottom
+                    sx={{
+                      color: "text",
+                      fontSize: 14,
+                      verticalAlign: "center",
+                      m: 0,
+                    }}>
+                    VIAJERO
+                  </Typography>
+                </Typography>
+              </CardContent>
+            </Card>
+
+            <Card
+              variant="outlined"
+              sx={{
+                width: "fit-content",
+                minWidth: 150,
+                borderRadius: 3,
+                border: "none",
                 background:
                   "linear-gradient(135deg, rgba(var(--primary-value), 0.4) 0%, #fff7f7ff 100%)",
                 ":hover": {
                   boxShadow: 3,
                 },
               }}>
-              <CardContent>
+              <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
                 <Typography
                   variant="h5"
                   component="div"
@@ -177,9 +229,11 @@ const Dashboard = () => {
                   <Typography
                     gutterBottom
                     sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                       color: "text.secondary",
                       fontSize: 14,
-                      verticalAlign: "center",
                       m: 0,
                     }}>
                     Total viajeros
@@ -200,7 +254,7 @@ const Dashboard = () => {
                   boxShadow: 3,
                 },
               }}>
-              <CardContent>
+              <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
                 <Typography
                   variant="h5"
                   component="div"

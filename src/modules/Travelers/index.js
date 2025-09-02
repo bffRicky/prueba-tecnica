@@ -87,8 +87,6 @@ const Travelers = () => {
     setAllStateOfTravelers(new Set(states));
   }, [travelers]);
 
-  // console.log(allStateOfTravelers);
-
   const modalBoxStyle = {
     position: "absolute",
     top: "50%",
@@ -114,6 +112,7 @@ const Travelers = () => {
   useEffect(() => {
     if (travelersRedux?.travelers?.length == 0) dispatch(fetchTravelers());
   }, [dispatch]);
+
   useEffect(() => {
     if (reservationsRedux?.reservations?.length == 0) dispatch(fetchReservations());
   }, [dispatch]);
@@ -310,6 +309,13 @@ const Travelers = () => {
     <Layout>
       <FastLinks />
       <Divider sx={{ mt: 1, mb: 3 }} />
+      <Typography
+        variant="h4"
+        textAlign={"center"}
+        color="var(--primary)"
+        textTransform={"uppercase"}>
+        Viajeros
+      </Typography>
       {travelers.length > 0 ? (
         <>
           <AddTraveler modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
@@ -379,10 +385,7 @@ const Travelers = () => {
                     />
 
                     <TableContainer component={Paper}>
-                      <Table
-                        // sx={{ minWidth: 650 }}
-                        size="small"
-                        aria-label="a dense table">
+                      <Table size="small" aria-label="a dense table">
                         <TableHead
                           sx={{
                             backgroundColor: "rgba(var(--primary-value),0.8)",
