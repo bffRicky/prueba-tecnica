@@ -4,22 +4,17 @@ import Layout from "../../shared/components/Layout";
 import FastLinks from "../../shared/components/FastLinks";
 import AddTraveler from "./AddTraveler";
 import EditTraveler from "./EditTraveler";
+import AddReservation from "../Reservations/AddReservation";
+import EditReservation from "../Reservations/EditReservation";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchTravelers,
-  reduxAddTraveler,
-  reduxEditTraveler,
   reduxDeleteTraveler,
 } from "../../shared/features/travelers/travelersSlice";
 
-import {
-  fetchReservations,
-  reduxAddReservation,
-  reduxEditReservation,
-  reduxDeleteReservation,
-} from "../../shared/features/reservations/reservationsSlice";
+import { fetchReservations } from "../../shared/features/reservations/reservationsSlice";
 
 //MUI
 import {
@@ -28,14 +23,11 @@ import {
   Card,
   CardActions,
   CardContent,
-  Button,
   IconButton,
   Typography,
   Backdrop,
   Modal,
   Fade,
-  Alert,
-  TextField,
   Divider,
   Chip,
   Table,
@@ -67,13 +59,15 @@ const Travelers = () => {
   const [modalEditIsOpen, setModalEditIsOpen] = useState(false);
   const [travelerToEdit, setTravelerToEdit] = useState({});
 
+  const [modalAddReservationIsOpen, setModalAddReservationIsOpen] = useState(false);
+  const [modalEditReservationIsOpen, setModalEditReservationIsOpen] = useState(false);
+  const [reservationToEdit, setReservationToEdit] = useState({});
+  const [addReservationToTraveler, setAddReservationToTraveler] = useState({});
+
   const [modalReservationIsOpen, setModalReservationIsOpen] = useState(false);
   const [currentTraveler, setCurrentTraveler] = useState([]);
   const [currentReservations, setCurrentReservations] = useState([]);
   const [currentResTableRow, setCurrentResTableRow] = useState([]);
-
-  const [travelersFiltered, setTravelersFiltered] = useState([]);
-  const [allStateOfTravelers, setAllStateOfTravelers] = useState([]);
 
   useEffect(() => {
     const states = [];
@@ -83,8 +77,6 @@ const Travelers = () => {
         return states.push(travelers.pais);
       });
     }
-
-    setAllStateOfTravelers(new Set(states));
   }, [travelers]);
 
   const modalBoxStyle = {
@@ -124,21 +116,25 @@ const Travelers = () => {
 
   //when the state as data i save that locally
   useEffect(() => {
-    // console.log(reservationsRedux);
     if (reservationsRedux.reservations.length > 0) {
       setReservations(reservationsRedux.reservations);
     }
-  }, [reservationsRedux.reservations]);
+  }, [reservationsRedux.reservations, modalAddReservationIsOpen]);
 
   //toggle the modals
   const toggleModalAdd = () => setModalIsAddOpen(!modalAddIsOpen);
   const toggleModalEdit = () => setModalEditIsOpen(!modalEditIsOpen);
+
+  const toggleModalAddReservation = () =>
+    setModalAddReservationIsOpen(!modalAddReservationIsOpen);
+  const toggleModaEditReservation = () =>
+    setModalEditReservationIsOpen(!modalEditReservationIsOpen);
+
   const toggleModalReservation = () => setModalReservationIsOpen(!modalReservationIsOpen);
 
   const handleOnclickEdit = (traveler) => {
     setTravelerToEdit(traveler);
     toggleModalEdit();
-    // setEditFormTravelerData(traveler);
   };
 
   //delete the traveler from the array list of travelers
@@ -151,13 +147,7 @@ const Travelers = () => {
     }
   };
 
-  const handleShowReservations = (traveler) => {
-    toggleModalReservation();
-
-    //reset the variable
-    setCurrentResTableRow([]);
-    setCurrentTraveler(traveler);
-
+  const buildTableRow = (traveler) => {
     const searchedReservations = reservations.filter((res) => {
       return res.viajeroId === traveler.uuid;
     });
@@ -168,19 +158,44 @@ const Travelers = () => {
       setCurrentResTableRow((values) => [
         ...values,
         {
-          destination: row.destino,
-          status: row.estado,
-          startDate: row.fechaInicio,
-          endDate: row.fechaFin,
-          price: row.precio,
+          destino: row.destino,
+          estado: row.estado,
+          fechaInicio: row.fechaInicio,
+          fechaFin: row.fechaFin,
+          precio: row.precio,
+          uuid: row.uuid,
         },
       ]);
     });
   };
 
-  const handleEditReservation = (reservationToEdit, traveler) => {
-    console.log(reservationToEdit, traveler);
+  //build the rows of table
+  const handleShowReservations = (traveler) => {
+    toggleModalReservation();
+
+    //reset the variable
+    setCurrentResTableRow([]);
+    setCurrentTraveler(traveler);
+
+    buildTableRow(traveler);
   };
+
+  const handleEditReservation = (reservationToEdit, traveler) => {
+    const rebuildObjToEdit = reservationToEdit;
+    rebuildObjToEdit.viajeroId = traveler.uuid;
+
+    setReservationToEdit(reservationToEdit);
+    toggleModaEditReservation();
+  };
+
+  useEffect(() => {
+    if (currentTraveler.uuid) {
+      //reset the variable
+      setCurrentResTableRow([]);
+      console.log(currentTraveler);
+      buildTableRow(currentTraveler);
+    }
+  }, [modalAddReservationIsOpen, modalEditReservationIsOpen, currentTraveler]);
 
   //build the card for each traveler
   const buildCard = (traveler, addTraveler = false) => {
@@ -324,6 +339,16 @@ const Travelers = () => {
             onCloseFn={toggleModalEdit}
             travelerToEdit={travelerToEdit}
           />
+          <AddReservation
+            modalIsOpen={modalAddReservationIsOpen}
+            onCloseFn={toggleModalAddReservation}
+            addUuid={addReservationToTraveler.uuid}
+          />
+          <EditReservation
+            modalIsOpen={modalEditReservationIsOpen}
+            onCloseFn={toggleModaEditReservation}
+            reservationToEdit={reservationToEdit}
+          />
           <Box sx={{ mb: 3 }}>{}</Box>
           {buildBoxCards(travelers)}
 
@@ -341,49 +366,49 @@ const Travelers = () => {
             }}>
             <Fade in={modalReservationIsOpen}>
               <Box sx={{ ...modalBoxStyle, minWidth: "550px" }}>
-                {currentReservations.length > 0 ? (
-                  <>
-                    <Box
+                <>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      fontWeight: "600",
+                    }}>
+                    <Typography>
+                      {`${currentTraveler.nombre} ${currentTraveler.apellidos}`}{" "}
+                    </Typography>
+                    <Chip
+                      icon={
+                        <AddIcon
+                          sx={{
+                            color: "var(--white)",
+                          }}
+                        />
+                      }
+                      label="Reservas"
+                      variant="contained"
+                      color="info"
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontWeight: "600",
-                      }}>
-                      <Typography>
-                        {`${currentTraveler.nombre} ${currentTraveler.apellidos}`}{" "}
-                      </Typography>
-                      <Chip
-                        icon={
-                          <AddIcon
-                            sx={{
-                              color: "var(--white)",
-                            }}
-                          />
-                        }
-                        label="Reservas"
-                        variant="contained"
-                        color="info"
-                        sx={{
-                          backgroundColor: "var(--primary)",
-                          fontWeight: "500",
-                          ":hover": {
-                            backgroundColor: "var(--secondary)",
-                          },
-                        }}
-                        onClick={() => {
-                          // handleShowReservations(traveler);
-                        }}
-                      />
-                    </Box>
-
-                    <Divider
-                      sx={{
-                        mt: 1.5,
-                        mb: 3,
+                        backgroundColor: "var(--primary)",
+                        fontWeight: "500",
+                        ":hover": {
+                          backgroundColor: "var(--secondary)",
+                        },
+                      }}
+                      onClick={() => {
+                        setAddReservationToTraveler(currentTraveler);
+                        toggleModalAddReservation();
                       }}
                     />
+                  </Box>
 
+                  <Divider
+                    sx={{
+                      mt: 1.5,
+                      mb: 3,
+                    }}
+                  />
+                  {currentReservations.length > 0 ? (
                     <TableContainer component={Paper}>
                       <Table size="small" aria-label="a dense table">
                         <TableHead
@@ -417,31 +442,31 @@ const Travelers = () => {
                           {currentResTableRow.map((currentRes) => {
                             return (
                               <TableRow
-                                key={currentRes.destination + currentTraveler.nombre}
+                                key={currentRes.destino + currentTraveler.nombre}
                                 align="left"
                                 sx={{
                                   "&:last-child td, &:last-child th": { border: 0 },
                                 }}>
                                 <TableCell component="th" scope="row">
-                                  {currentRes.destination}
+                                  {currentRes.destino}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {currentRes.status.toLowerCase() === "confirmada" ? (
+                                  {currentRes.estado.toLowerCase() === "confirmada" ? (
                                     <CheckCircleIcon color="success" />
-                                  ) : currentRes.status.toLowerCase() === "pendiente" ? (
+                                  ) : currentRes.estado.toLowerCase() === "pendiente" ? (
                                     <PendingIcon color="warning" />
                                   ) : (
                                     <CancelIcon color="error" />
                                   )}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {currentRes.startDate}
+                                  {currentRes.fechaInicio}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {currentRes.endDate}
+                                  {currentRes.fechaFin}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                  {currentRes.price}€
+                                  {currentRes.precio}€
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                   <IconButton
@@ -460,10 +485,10 @@ const Travelers = () => {
                         </TableBody>
                       </Table>
                     </TableContainer>
-                  </>
-                ) : (
-                  <Typography>{`${currentTraveler.nombre} ${currentTraveler.apellidos} no tiene reservas`}</Typography>
-                )}
+                  ) : (
+                    <Typography>{`${currentTraveler.nombre} ${currentTraveler.apellidos} no tiene reservas`}</Typography>
+                  )}
+                </>
               </Box>
             </Fade>
           </Modal>

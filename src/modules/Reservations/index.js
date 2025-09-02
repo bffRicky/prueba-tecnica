@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Layout from "../../shared/components/Layout";
 import FastLinks from "../../shared/components/FastLinks";
-// import AddTraveler from "./AddTraveler";
-// import EditTraveler from "./EditTraveler";
+import AddReservation from "./AddReservation";
+import EditReservation from "./EditReservation";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -11,36 +11,11 @@ import { fetchTravelers } from "../../shared/features/travelers/travelersSlice";
 
 import {
   fetchReservations,
-  reduxAddReservation,
-  reduxEditReservation,
   reduxDeleteReservation,
 } from "../../shared/features/reservations/reservationsSlice";
 
 //MUI
-import {
-  Box,
-  Skeleton,
-  Card,
-  CardActions,
-  CardContent,
-  Button,
-  IconButton,
-  Typography,
-  Backdrop,
-  Modal,
-  Fade,
-  Alert,
-  TextField,
-  Divider,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { IconButton, Typography, Divider, Chip, Paper } from "@mui/material";
 
 //MUI DATA GRUD
 import { DataGrid } from "@mui/x-data-grid";
@@ -49,8 +24,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import {
   Delete as DeleteIcon,
   Edit as EditIcon,
-  PersonAddAlt as PersonAddAltIcon,
-  Flight as FlightIcon,
   Pending as PendingIcon,
   CheckCircle as CheckCircleIcon,
   Cancel as CancelIcon,
@@ -63,10 +36,18 @@ const Reservations = () => {
 
   const [tableRows, setTableRows] = useState([]);
 
+  const [modalAddIsOpen, setModalIsAddOpen] = useState(false);
+  const [modalEditIsOpen, setModalIsEditOpen] = useState(false);
+  const [reservationToEdit, setReservationToEdit] = useState([]);
+
+  //toggle the modals
+  const toggleModalAdd = () => setModalIsAddOpen(!modalAddIsOpen);
+  const toggleModalEdit = () => setModalIsEditOpen(!modalEditIsOpen);
+
   const tableColumns = [
     { field: "id", headerName: "id", width: 100 },
     { field: "destino", headerName: "Destino", width: 100 },
-    { field: "viajeroId", headerName: "Id Viajero", width: 80 },
+    { field: "viajeroId", headerName: "Viajero", width: 160 },
     {
       field: "estado",
       headerName: "Estado",
@@ -129,14 +110,14 @@ const Reservations = () => {
   ];
 
   const handleEditReservation = (res) => {
-    console.log(res);
+    setReservationToEdit(res);
+    toggleModalEdit();
   };
   const handleDeleteReservation = (res) => {
     const textMessage = `¿Estás seguro de que quieres eliminar esta Reserva? ${res.destino} ${res.uuid}`;
 
     //the user confirm if want to delete the traveler
     if (window.confirm(textMessage)) {
-      console.log("entro");
       dispatch(reduxDeleteReservation(res));
     }
   };
@@ -165,13 +146,12 @@ const Reservations = () => {
 
   //when the state as data i save that locally
   useEffect(() => {
-    // console.log(reservationsRedux);
-    console.warn(reservationsRedux.reservations);
     if (reservationsRedux.reservations.length > 0) {
       setReservations(reservationsRedux.reservations);
     }
   }, [reservationsRedux.reservations]);
 
+  //reload the table with the updated data
   useEffect(() => {
     if (reservations.length > 0) buildtable();
   }, [reservations]);
@@ -185,21 +165,33 @@ const Reservations = () => {
 
       tableColumns.map((column) => {
         if (column.field !== "actions")
-          singleRow[column.field] = res[column.field === "id" ? "uuid" : column.field];
+          if (column.field === "viajeroId")
+            travelers.map((trav) => {
+              if (trav.uuid === res[column.field])
+                singleRow[column.field] = trav.nombre + " " + trav.apellidos;
+            });
+          else
+            singleRow[column.field] = res[column.field === "id" ? "uuid" : column.field];
         else singleRow["actions"] = res;
       });
 
       rows.push(singleRow);
     });
-    console.log(rows);
+
     setTableRows(rows);
   };
 
-  const paginationModel = { page: 0, pageSize: 10 };
+  const paginationModel = { page: 0, pageSize: 20 };
   return (
     <Layout>
       <FastLinks />
       <Divider sx={{ mt: 1, mb: 3 }} />
+      <AddReservation modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
+      <EditReservation
+        modalIsOpen={modalEditIsOpen}
+        onCloseFn={toggleModalEdit}
+        reservationToEdit={reservationToEdit}
+      />
       <Typography
         variant="h4"
         textAlign={"center"}
@@ -207,14 +199,26 @@ const Reservations = () => {
         textTransform={"uppercase"}>
         Reservas
       </Typography>
+      <Chip
+        icon={<AddIcon />}
+        label="Reservas"
+        variant="contained"
+        color="info"
+        sx={{ mt: 1, mb: 2 }}
+        onClick={() => {
+          toggleModalAdd();
+        }}
+      />
       <Paper sx={{ height: 400, width: "100%" }}>
         <DataGrid
           columns={tableColumns}
           rows={tableRows}
           initialState={{ pagination: { paginationModel } }}
-          // pageSizeOptions={[10, 20]}
-          // checkboxSelection
-          sx={{ border: 0 }}
+          pageSizeOptions={[5, 20]}
+          sx={{
+            border: 0,
+            mt: 2,
+          }}
         />
       </Paper>
     </Layout>

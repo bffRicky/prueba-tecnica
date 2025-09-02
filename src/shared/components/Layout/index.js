@@ -1,6 +1,5 @@
 import React from "react";
 
-import "./index.scss";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";

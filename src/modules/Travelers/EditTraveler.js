@@ -7,12 +7,7 @@ import { reduxEditTraveler } from "../../shared/features/travelers/travelersSlic
 //MUI
 import {
   Box,
-  Skeleton,
-  Card,
-  CardActions,
-  CardContent,
   Button,
-  IconButton,
   Typography,
   Backdrop,
   Modal,
@@ -20,27 +15,7 @@ import {
   Alert,
   TextField,
   Divider,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
 } from "@mui/material";
-
-//MUI ICONS
-import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  PersonAddAlt as PersonAddAltIcon,
-  Flight as FlightIcon,
-  Pending as PendingIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
-  Add as AddIcon,
-} from "@mui/icons-material";
 
 const EditTraveler = ({ modalIsOpen, onCloseFn, travelerToEdit }) => {
   const [editFormTravelerData, setEditFormTravelerData] = useState(travelerToEdit);
@@ -54,9 +29,6 @@ const EditTraveler = ({ modalIsOpen, onCloseFn, travelerToEdit }) => {
   //REDUX LOGIC
   //is the function for send the actions to the reducer
   const dispatch = useDispatch();
-
-  //allow to read the redux state of travelers and reservations
-  const travelersRedux = useSelector((state) => state.travelers);
 
   const modalBoxStyle = {
     position: "absolute",
@@ -125,6 +97,8 @@ const EditTraveler = ({ modalIsOpen, onCloseFn, travelerToEdit }) => {
       }}>
       <Fade in={modalIsOpen}>
         <Box sx={modalBoxStyle}>
+          <Typography variant="h5">Actualiza Viajero</Typography>
+          <Divider sx={{ my: 1 }} />
           <Box
             component="form"
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}

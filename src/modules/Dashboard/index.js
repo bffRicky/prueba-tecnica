@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import "./index.scss";
-
 import Layout from "../../shared/components/Layout";
 import FastLinks from "../../shared/components/FastLinks";
 import AddTraveler from "../Travelers/AddTraveler";
@@ -13,46 +11,10 @@ import { fetchTravelers } from "../../shared/features/travelers/travelersSlice";
 import { fetchReservations } from "../../shared/features/reservations/reservationsSlice";
 
 //MUI
-import {
-  Box,
-  Skeleton,
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  Button,
-  IconButton,
-  Typography,
-  Backdrop,
-  Modal,
-  Fade,
-  Alert,
-  TextField,
-  Divider,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Icon,
-} from "@mui/material";
+import { Box, Skeleton, Card, CardContent, Typography } from "@mui/material";
 
 //MUI ICONS
-import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  PersonAddAlt as PersonAddAltIcon,
-  Flight as FlightIcon,
-  Pending as PendingIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
-  Add as AddIcon,
-  Dashboard as DashboardIcon,
-  Backpack as BackpackIcon,
-} from "@mui/icons-material";
+import { Add as AddIcon } from "@mui/icons-material";
 
 const Dashboard = () => {
   const [travelers, setTravelers] = useState([]);
@@ -108,17 +70,12 @@ const Dashboard = () => {
         countsCountry[item] = (countsCountry[item] || 0) + 1;
       });
 
-      // console.log([...new Set(travelerCountry)]);
-      // console.log(countsCountry);
-
-      // console.warn(countsCountry);
       setCountriesNumber(countsCountry);
     }
   }, [travelersRedux.travelers]);
 
   //when the state as data i save that locally
   useEffect(() => {
-    console.log(reservationsRedux);
     if (reservationsRedux.reservations.length > 0) {
       setReservations(reservationsRedux.reservations);
 
@@ -142,7 +99,7 @@ const Dashboard = () => {
     <Layout>
       <FastLinks />
       <AddTraveler modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
-      {/* <Divider sx={{ mt: 1, mb: 3 }} /> */}
+
       <Box sx={{ my: 3 }}>
         <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
           VIAJEROS
@@ -537,9 +494,7 @@ const Dashboard = () => {
                     minWidth: 150,
                     borderRadius: 3,
                     py: 0,
-                    // border: "none",
-                    // background:
-                    //   "linear-gradient(135deg, rgba(88, 244, 103, 1) 0%, #fff7f7ff 100%)",
+
                     ":hover": {
                       boxShadow: 3,
                     },

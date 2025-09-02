@@ -4,15 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { reduxAddTraveler } from "../../shared/features/travelers/travelersSlice";
 
+import { createUUID } from "../../shared/utils/tools";
+
 //MUI
 import {
   Box,
-  Skeleton,
-  Card,
-  CardActions,
-  CardContent,
   Button,
-  IconButton,
   Typography,
   Backdrop,
   Modal,
@@ -20,27 +17,7 @@ import {
   Alert,
   TextField,
   Divider,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
 } from "@mui/material";
-
-//MUI ICONS
-import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  PersonAddAlt as PersonAddAltIcon,
-  Flight as FlightIcon,
-  Pending as PendingIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
-  Add as AddIcon,
-} from "@mui/icons-material";
 
 const AddTraveler = ({ modalIsOpen, onCloseFn }) => {
   const [newFormTravelerData, setNewFormTravelerData] = useState({
@@ -74,11 +51,6 @@ const AddTraveler = ({ modalIsOpen, onCloseFn }) => {
     p: 4,
   };
 
-  //create a uniq uuid base on date
-  const createUUID = () => {
-    return `user-tr-${Math.floor(Math.random() * 100)}-${Date.now()}`;
-  };
-
   //ADD TRAVELER
   //set the data of the new traveler
   const handleChangeNewTraveler = (e) => {
@@ -99,7 +71,11 @@ const AddTraveler = ({ modalIsOpen, onCloseFn }) => {
 
     let valuesAreComplete = true;
 
-    for (const [key, value] of Object.entries(newFormTravelerData)) {
+    const localFormData = newFormTravelerData;
+    localFormData.uuid = createUUID("trav");
+    localFormData.fechaRegistro = new Date().toISOString().split("T")[0];
+
+    for (const [key, value] of Object.entries(localFormData)) {
       if (value === "") {
         valuesAreComplete = false;
         setNewTravelerIsValid(false);
@@ -109,7 +85,7 @@ const AddTraveler = ({ modalIsOpen, onCloseFn }) => {
 
     if (valuesAreComplete) {
       //save data on redux
-      dispatch(reduxAddTraveler(newFormTravelerData));
+      dispatch(reduxAddTraveler(localFormData));
 
       //close modal and reset the form
       onCloseFn();
@@ -127,14 +103,6 @@ const AddTraveler = ({ modalIsOpen, onCloseFn }) => {
     }
   };
 
-  useEffect(() => {
-    setNewFormTravelerData((values) => ({ ...values, uuid: createUUID() }));
-    setNewFormTravelerData((values) => ({
-      ...values,
-      fechaRegistro: new Date().toISOString().split("T")[0],
-    }));
-  }, []);
-
   return (
     <Modal
       aria-labelledby="transition-modal-title"
@@ -150,6 +118,8 @@ const AddTraveler = ({ modalIsOpen, onCloseFn }) => {
       }}>
       <Fade in={modalIsOpen}>
         <Box sx={modalBoxStyle}>
+          <Typography variant="h5">Añadir Viajeros</Typography>
+          <Divider sx={{ my: 1 }} />
           <Box
             component="form"
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}

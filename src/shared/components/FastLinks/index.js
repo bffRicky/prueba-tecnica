@@ -3,42 +3,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 //MUI
-import {
-  Box,
-  Skeleton,
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  Button,
-  IconButton,
-  Typography,
-  Backdrop,
-  Modal,
-  Fade,
-  Alert,
-  TextField,
-  Divider,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 //MUI ICONS
 import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  PersonAddAlt as PersonAddAltIcon,
   Flight as FlightIcon,
-  Pending as PendingIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
-  Add as AddIcon,
   Dashboard as DashboardIcon,
   Backpack as BackpackIcon,
 } from "@mui/icons-material";
