@@ -125,10 +125,12 @@ const Travelers = () => {
   const toggleModalAdd = () => setModalIsAddOpen(!modalAddIsOpen);
   const toggleModalEdit = () => setModalEditIsOpen(!modalEditIsOpen);
 
-  const toggleModalAddReservation = () =>
+  const toggleModalAddReservation = () => {
     setModalAddReservationIsOpen(!modalAddReservationIsOpen);
-  const toggleModaEditReservation = () =>
+  };
+  const toggleModaEditReservation = () => {
     setModalEditReservationIsOpen(!modalEditReservationIsOpen);
+  };
 
   const toggleModalReservation = () => setModalReservationIsOpen(!modalReservationIsOpen);
 
@@ -148,7 +150,7 @@ const Travelers = () => {
   };
 
   const buildTableRow = (traveler) => {
-    const searchedReservations = reservations.filter((res) => {
+    const searchedReservations = reservationsRedux.reservations.filter((res) => {
       return res.viajeroId === traveler.uuid;
     });
 
@@ -180,6 +182,8 @@ const Travelers = () => {
     buildTableRow(traveler);
   };
 
+  // use@
+
   const handleEditReservation = (reservationToEdit, traveler) => {
     const rebuildObjToEdit = reservationToEdit;
     rebuildObjToEdit.viajeroId = traveler.uuid;
@@ -192,7 +196,6 @@ const Travelers = () => {
     if (currentTraveler.uuid) {
       //reset the variable
       setCurrentResTableRow([]);
-      console.log(currentTraveler);
       buildTableRow(currentTraveler);
     }
   }, [modalAddReservationIsOpen, modalEditReservationIsOpen, currentTraveler]);
@@ -439,10 +442,10 @@ const Travelers = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {currentResTableRow.map((currentRes) => {
+                          {currentResTableRow.map((currentRes, i) => {
                             return (
                               <TableRow
-                                key={currentRes.destino + currentTraveler.nombre}
+                                key={currentRes.destino + currentTraveler.nombre + i}
                                 align="left"
                                 sx={{
                                   "&:last-child td, &:last-child th": { border: 0 },

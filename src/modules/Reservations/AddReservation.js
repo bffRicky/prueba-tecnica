@@ -166,7 +166,7 @@ const AddReservation = ({ modalIsOpen, onCloseFn, addUuid = "" }) => {
                   handleSelectFields("estado", e.target.value);
                 }}>
                 <MenuItem value={"Confirmada"}>Confirmada</MenuItem>
-                <MenuItem value={"pendiente"}>Pendiente</MenuItem>
+                <MenuItem value={"Pendiente"}>Pendiente</MenuItem>
                 <MenuItem value={"Cancelada"}>Cancelada</MenuItem>
               </Select>
             </FormControl>
