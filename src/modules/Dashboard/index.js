@@ -11,11 +11,27 @@ import { fetchTravelers } from "../../shared/features/travelers/travelersSlice";
 import { fetchReservations } from "../../shared/features/reservations/reservationsSlice";
 
 //MUI
-import { Box, Skeleton, Card, CardContent, Typography } from "@mui/material";
+import {
+  Box,
+  Skeleton,
+  Card,
+  CardContent,
+  Container,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import { BarChart, PieChart } from "@mui/x-charts";
 
 //MUI ICONS
-import { Add as AddIcon, PersonAddAlt as PersonAddAltIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  PersonAddAlt as PersonAddAltIcon,
+  EventAvailable as EventAvailableIcon,
+  Flag as FlagIcon,
+  Hiking as HikingIcon,
+  AttachMoney as AttachMoneyIcon,
+  Groups as GroupsIcon,
+} from "@mui/icons-material";
 
 const Dashboard = () => {
   const [travelers, setTravelers] = useState([]);
@@ -45,6 +61,63 @@ const Dashboard = () => {
   //allow to read the redux state of travelers and reservations
   const travelersRedux = useSelector((state) => state.travelers);
   const reservationsRedux = useSelector((state) => state.reservations);
+
+  const cardStyle = {
+    width: "fit-content",
+    padding: "0",
+    borderRadius: 3,
+    color: "#fff",
+    backgroundColor: "rgba(var(--secondary-value), 0.7)",
+    "&:last.child": { padding: "0" },
+  };
+
+  const cardContentStyle = {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    padding: "8px 16px",
+    "&:last-child": {
+      paddingBottom: "8px",
+    },
+  };
+  const cardTextStyle = { display: "flex", flexDirection: "column" };
+  const cardIconStyle = {
+    color: "var(--secondary)",
+    p: 0.5,
+    backgroundColor: "#fff",
+    borderRadius: 1,
+  };
+
+  const cardIconButtonStyle = { fontSize: 40 };
+
+  const cardsData = [
+    {
+      icon: <HikingIcon sx={cardIconButtonStyle} />,
+      title: "Viajeros totales",
+      number: travelers.length,
+    },
+    {
+      icon: <FlagIcon sx={cardIconButtonStyle} />,
+      title: "Total paises de origen",
+      number: travelersCountry.length,
+    },
+    {
+      icon: <EventAvailableIcon sx={cardIconButtonStyle} />,
+      title: "Reservas totales",
+      number: reservations.length,
+    },
+    {
+      icon: <AttachMoneyIcon sx={cardIconButtonStyle} />,
+      title: "Reservas totales",
+      number: totalIncome + "€",
+    },
+    {
+      icon: <GroupsIcon sx={cardIconButtonStyle} />,
+      title: "Reservas totales",
+      number: Math.round(totalIncome / reservations.length) + "€",
+    },
+  ];
 
   //load the travelers and reservations data when the component is mounted
   useEffect(() => {
@@ -108,6 +181,26 @@ const Dashboard = () => {
     }
   }, [travelersCountry, countriesNumber]);
 
+  const cardsBuilder = () => {
+    return cardsData.map((card) => {
+      return (
+        <Card variant="outlined" sx={cardStyle}>
+          <CardContent sx={cardContentStyle}>
+            <IconButton size="large" sx={cardIconStyle} aria-label="">
+              {card.icon}
+            </IconButton>
+            <div className="card-text" sx={cardTextStyle}>
+              <Typography>{card.title}</Typography>
+              <Typography component="div" sx={{ fontWeight: 600, fontSize: "20px" }}>
+                {card.number}
+              </Typography>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    });
+  };
+
   return (
     <Layout>
       <FastLinks />
@@ -121,293 +214,51 @@ const Dashboard = () => {
       </Typography>
       <AddTraveler modalIsOpen={modalAddIsOpen} onCloseFn={toggleModalAdd} />
 
-      <Box sx={{ mb: 8 }}>
-        <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
-          VIAJEROS
-        </Typography>
-        {travelers.length > 0 ? (
-          <Box
-            sx={{
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
-              gap: 2,
-            }}>
-            <Card
-              variant="outlined"
-              sx={{
-                width: "150px",
-                // minWidth: "150px",
-                borderRadius: 3,
-                ":hover": {
-                  boxShadow: 3,
-                },
-                backgroundColor: "rgba(var(--primary-value), 0.2)",
-              }}
-              key={"add-user"}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100%",
-                  transition: "all 0.3s",
-                  ":hover": {
-                    cursor: "pointer",
-                    backgroundColor: "rgba(var(--primary-value), 0.4)",
-                  },
-                }}
-                onClick={() => {
-                  toggleModalAdd();
-                }}>
-                <PersonAddAltIcon sx={{ fontSize: 64, color: "var(--primary)" }} />
-              </Box>
-            </Card>
+      <Box sx={{ mb: 8, display: { xs: "none", sm: "block" } }}>
+        <Container
+          sx={{ display: "flex", flexDirection: "row", gap: 2, flexWrap: "wrap" }}>
+          {cardsBuilder()}
+        </Container>
+      </Box>
 
-            <Card
-              variant="outlined"
-              sx={{
-                width: "fit-content",
-                minWidth: 150,
-                borderRadius: 3,
-                border: "none",
-                background:
-                  "linear-gradient(135deg, rgba(var(--primary-value), 0.4) 0%, #fff7f7ff 100%)",
-                ":hover": {
-                  boxShadow: 3,
-                },
-              }}>
-              <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
-                <Typography
-                  gutterBottom
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    color: "text.secondary",
-                    fontSize: 14,
-                    m: 0,
-                  }}>
-                  Total viajeros
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: "var(--secondary)",
-                    fontWeight: 600,
-                  }}>
-                  {travelers.length}
-                </Typography>
-              </CardContent>
-            </Card>
-            <Card
-              variant="outlined"
-              sx={{
-                width: "fit-content",
-                minWidth: 150,
-                borderRadius: 3,
-                border: "none",
-                background:
-                  "linear-gradient(135deg, rgba(var(--primary-value), 0.4) 0%, #fff7f7ff 100%)",
-                ":hover": {
-                  boxShadow: 3,
-                },
-              }}>
-              <CardContent sx={{ m: 0, "&:last-child": { py: 1 } }}>
-                <Typography
-                  gutterBottom
-                  sx={{
-                    color: "text.secondary",
-                    fontSize: 14,
-                    verticalAlign: "center",
-                    m: 0,
-                  }}>
-                  Total paises de origen
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: "var(--secondary)",
-                    fontWeight: 600,
-                  }}>
-                  {travelersCountry.length}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-        ) : (
-          <React.Fragment key={"loading-travelers"}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 2,
-                flexWrap: "wrap",
-                justifyContent: "center",
-                marginBottom: 1,
-                mt: 2,
-              }}
-              key={"loading-travelers-box"}>
-              {[...Array(3)].map((_, index) => (
-                <Skeleton
-                  key={index}
-                  variant="rectangular"
-                  width={210}
-                  height={118}
-                  animation="pulse"
-                />
-              ))}
-            </Box>
-          </React.Fragment>
-        )}
-      </Box>
-      <Box sx={{ my: 8 }}>
-        <Typography variant="h5" sx={{ color: "var(--primary)", mb: 2 }}>
-          RESERVAS
-        </Typography>
-        {reservations.length > 0 ? (
+      <Box
+        sx={{
+          my: 8,
+          display: "flex",
+          flexDirection: { sm: "row", xs: "column", alignItems: "center" },
+          gap: 2,
+        }}>
+        <Card
+          variant="outlined"
+          sx={{
+            width: "100%",
+            minWidth: "150px",
+            maxWidth: "250px",
+            borderRadius: 3,
+            ":hover": {
+              boxShadow: 3,
+            },
+            backgroundColor: "rgba(var(--primary-value), 0.2)",
+          }}
+          key={"add-user"}>
           <Box
             sx={{
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
-              gap: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              transition: "all 0.3s",
+              ":hover": {
+                cursor: "pointer",
+                backgroundColor: "rgba(var(--primary-value), 0.4)",
+              },
+            }}
+            onClick={() => {
+              toggleModalAdd();
             }}>
-            <Card
-              variant="outlined"
-              sx={{
-                width: "fit-content",
-                minWidth: 150,
-                borderRadius: 3,
-                border: "none",
-                background:
-                  "linear-gradient(135deg, rgba(var(--secondary-value), 0.4) 0%, #fff7f7ff 100%)",
-                ":hover": {
-                  boxShadow: 3,
-                },
-              }}>
-              <CardContent>
-                <Typography
-                  gutterBottom
-                  sx={{
-                    color: "text.secondary",
-                    fontSize: 14,
-                    verticalAlign: "center",
-                    m: 0,
-                  }}>
-                  Total reservas
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: "var(--secondary)",
-                    fontWeight: 600,
-                  }}>
-                  {reservations.length}
-                </Typography>
-              </CardContent>
-            </Card>
-            <Card
-              variant="outlined"
-              sx={{
-                width: "fit-content",
-                minWidth: 150,
-                borderRadius: 3,
-                border: "none",
-                background:
-                  "linear-gradient(135deg, rgba(var(--secondary-value), 0.4) 0%, #fff7f7ff 100%)",
-                ":hover": {
-                  boxShadow: 3,
-                },
-              }}>
-              <CardContent>
-                <Typography
-                  gutterBottom
-                  sx={{
-                    color: "text.secondary",
-                    fontSize: 14,
-                    verticalAlign: "center",
-                    m: 0,
-                  }}>
-                  Entradas totales
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: "var(--secondary)",
-                    fontWeight: 600,
-                  }}>
-                  {totalIncome}€
-                </Typography>
-              </CardContent>
-            </Card>
-            <Card
-              variant="outlined"
-              sx={{
-                width: "fit-content",
-                minWidth: 150,
-                borderRadius: 3,
-                border: "none",
-                background:
-                  "linear-gradient(135deg, rgba(var(--secondary-value), 0.4) 0%, #fff7f7ff 100%)",
-                ":hover": {
-                  boxShadow: 3,
-                },
-              }}>
-              <CardContent>
-                <Typography
-                  gutterBottom
-                  sx={{
-                    color: "text.secondary",
-                    fontSize: 14,
-                    verticalAlign: "center",
-                    m: 0,
-                  }}>
-                  Media precios
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: "var(--secondary)",
-                    fontWeight: 600,
-                  }}>
-                  {Math.round(totalIncome / reservations.length)}€
-                </Typography>
-              </CardContent>
-            </Card>
+            <PersonAddAltIcon sx={{ fontSize: 64, color: "var(--primary)" }} />
           </Box>
-        ) : (
-          <React.Fragment key={"loading-travelers"}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 2,
-                flexWrap: "wrap",
-                justifyContent: "center",
-                marginBottom: 1,
-                mt: 2,
-              }}
-              key={"loading-travelers-box"}>
-              {[...Array(3)].map((_, index) => (
-                <Skeleton
-                  key={index}
-                  variant="rectangular"
-                  width={210}
-                  height={118}
-                  animation="pulse"
-                />
-              ))}
-            </Box>
-          </React.Fragment>
-        )}
-      </Box>
-      <Box sx={{ my: 8 }}>
+        </Card>
         {Object.entries(reservationStatus).length > 0 ? (
           <PieChart
             series={[
