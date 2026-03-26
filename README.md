@@ -1,6 +1,7 @@
 # Travel Agency Dashboard
 
 Frontend technical test built with **React**, **Redux Toolkit**, and **Material UI**. The app simulates a travel agency CMS where you can manage **travelers** and their **reservations**.
+Without server and make in a few hours
 
 ## Features
 
